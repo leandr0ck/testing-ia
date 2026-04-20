@@ -318,9 +318,12 @@ La dificultad aquí es sutil: `children` siempre es un array (nunca `undefined`)
 
 ### Gemini
 
-| Modelo               | Input | Cached Input | Output | Context |
-|----------------------|-------|--------------|--------|----------|
-| Gemini-3-flash-preview | $0.50 | $0.05        | $3.00  | 1M      |
+| Modelo               | Input (Short) | Cached Input | Output | Input (Long) | Cached Input (Long) |
+|----------------------|---------------|-------------|--------|-------------|---------------------|
+| Gemini-3-flash-preview | $0.50        | $0.05       | $3.00  | —           | —                   |
+| Gemini-3.1-pro-preview | $2.00*       | $0.20*      | $12.00*| $4.00*      | $0.40*              |
+
+*_Para instrucciones ≤200k tokens. Precios para >200k tokens: Input $4.00, Cached $0.40, Output $18.00_
 
 ### Kimi
 
