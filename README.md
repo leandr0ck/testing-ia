@@ -1,0 +1,353 @@
+# Mega Menu Test
+
+> Test comparativo de modelos IA para bugfixing en Frontend
+>
+> La prueba se está realizando sin documentación de referencia ni orientación previa. El agente debe inferir por sí solo la arquitectura del proyecto y el stack utilizado.
+
+---
+
+## 📊 Notas sobre Tokens
+
+Los tokens mostrados en la barra de estado reflejan:
+
+1. **Totales acumulados dentro de la sesión**:
+   - **Prompt tokens** (`↑`): enviados al modelo.
+   - **Completion tokens** (`↓`): recibidos del modelo.
+   - **Cache tokens** (`R`): reutilizados desde el caché (reduce costos y latencia).
+
+2. **Persistencia y reinicio**:
+   - Los valores acumulados se resetean únicamente al:
+     - Iniciar sesión nueva (`/new`).
+     - Compactar sesión (`/compact`).
+
+3. **Importancia de Cache (R)**:
+   - Ejemplo: `R915K` indica 915,000 tokens reutilizados del caché, optimizando desempeño.
+
+> ⚠️ Los valores en las tablas de resultados son **acumulados por sesión**. Cada intento sucesivo suma sobre el anterior (↑prompt, ↓completion, Rcache). No representan el costo del intento individual.
+
+---
+
+## 🔍 Análisis del Test
+
+### Task 1 — El verdadero desafío: DaisyUI
+
+El bug de hover no es un problema de CSS genérico ni de event listeners de JavaScript. La causa raíz está en cómo **DaisyUI 5 implementa `dropdown-hover`**: el componente genera una zona de hover invisible que se extiende más allá del trigger visible. Resolver esto correctamente requiere que el modelo identifique la librería, entienda cómo funciona su sistema de dropdown, y aplique la solución dentro de sus patrones — no reemplazándolos.
+
+El enfoque que toma cada modelo revela su capacidad de razonamiento sobre dependencias externas:
+
+| Enfoque | Descripción | Riesgo |
+|---------|-------------|--------|
+| **CSS puro** | Ajusta `pointer-events`, `z-index` o áreas de hover sin tocar DaisyUI | Suele romper el comportamiento de apertura |
+| **JS listeners** | Reemplaza el mecanismo de DaisyUI con lógica custom | Pierde el hover nativo, cambia a click |
+| **DaisyUI-aware** | Entiende que el problema está en la clase `dropdown-hover` y trabaja dentro de sus constraints | Solución limpia y estable |
+
+Los modelos que cambian el menú de **hover a click** están tomando el camino de menor resistencia: eliminan el problema reemplazando el mecanismo de apertura. Técnicamente "arreglan" el hover zone, pero no entendieron el constraint real.
+
+### Task 2 — Condición en el dato
+
+La dificultad aquí es sutil: `children` siempre es un array (nunca `undefined`), por lo que el check no es `if (category.children)` sino `if (category.children.length > 0)`. Los modelos que no leen el data file primero tienden a escribir la condición incorrecta o a renderizar un panel vacío en lugar de ocultarlo.
+
+---
+
+## 🤖 Resultados de Testeo de Agentes IA
+
+### DeepSeek 3.2
+
+#### Task 1
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ✔️ Resuelto | ↑585k ↓8.4k R171k | Resuelto en el primer intento, aunque tomó bastante tiempo |
+
+#### Task 2
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ✔️ Resuelto | ↑562k ↓14k R349k | Resuelto en el primer intento, pero hizo sobreingeniería y tomó bastante tiempo |
+
+### Gemini 2.5-flash
+
+#### Task 1
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ✔️ Resuelto | ↑87k ↓5.6k R84k | Resuelto en el primer intento, muy rápido y eficiente en tokens. |
+
+#### Task 2
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ❌ Fallido | ↑131k ↓11k | No solucionó el problema y rompió el layout del menú. |
+| 2 | ❌ Fallido (Abortado) | ↑724k ↓35k R1.2M | Lo rompió todo. Test abortado. |
+
+
+### Gemini 3-flash-preview
+
+#### Task 1
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ❌ Fallido | ↑84k ↓5.3k R673k | Error de sintaxis: dejó un tag div mal cerrado que rompió el código. |
+| 2 | ✔️ Resuelto | ↑84k ↓5.3k R673k | Solucionó la tarea rápidamente. El error anterior era un div mal cerrado. |
+
+#### Task 2
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ✔️ Resuelto | ↑43k ↓2.4k R71k | Hyper rápido, resultado perfecto. |
+
+### GPT-4o
+
+#### Task 1
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ⚠️ Parcial | ↑38k ↓3.2k R253k | No se resolvió el problema, pero no se rompió nada existente. |
+| 2 | ⚠️ Parcial | ↑38k ↓3.6k R333k | Agregó lógica de debounce a `handleMouseEnterWithDebounce`, pero el problema persiste. |
+| 3 | ❌ Test abortado | ↑39k ↓7.3k R754k | No solucionó ni rompió. |
+
+#### Task 2
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+
+### GPT-5-mini
+
+#### Task 1
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ❌ Fallido | ↑38k ↓3.2k R249k | Mezcló sintaxis de Svelte 4 (`onmouseenter="..."`) con sintaxis de Svelte 5 (`on:mouseleave`), generando un error de sintaxis que rompió el proyecto. |
+| 2 | ⚠️ Parcial | ↑45k ↓5.5k R478k | Solucionó el bug original pero cambió el comportamiento: ahora requiere click para abrir el menú en lugar de hover. |
+| 3 | ❌ Fallido | ↑52k ↓8.7k R807k | El menú dejó de funcionar completamente: no abre ni con hover ni con click. |
+| 4 | ❌ Fallido (Abortado) | ↑64k ↓13k R1.2M | Arregló el bug inicial, pero rompió más comportamientos críticos. Test abortado. |
+
+#### Task 2
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+
+### GPT-5.4-mini
+
+#### Task 1
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ✔️ Resuelto | ↑47k ↓8.7k R436k | Tiempo moderado. |
+
+#### Task 2
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ✔️ Resuelto | ↑43k ↓8.9k R289k | Resultado excelente, incluso agregó un efecto apropiado. Velocidad interesante. |
+
+### GLM 5.1
+
+#### Task 1
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ✔️ Resuelto | ↑132k ↓37k R442k | A pesar de que tomó muchísimo tiempo, resolvió lo pedido |
+
+#### Task 2
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ✔️ Resuelto | ↑23k ↓5.7k R349k | Resuelto en el primer intento |
+
+### Kimi-k2.5
+
+#### Task 1
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ⚠️ Parcial | ↑520k ↓4.8k R129k | Solucionó el bug pero hizo que el menú se abra con Click no con Hover |
+| 2 | ✔️ Resuelto | ↑907k ↓8.0k R291k | Problema corregido, comportamiento esperado alcanzado |
+
+#### Task 2
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ✔️ Resuelto | ↑317k ↓4.5k | Resuelto en el primer intento |
+
+### MiniMax-M2.7
+
+#### Task 1
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ⚠️ Parcial | ↑44k ↓3.6k R301k | Resolvió el issue original, pero introdujo un nuevo bug: el menú ya no permanece abierto |
+| 2 | ⚠️ Parcial | ↑99k ↓5.5k R528k | Resolvió parcialmente, pero el estado del menú sigue siendo inconsistente al cerrar |
+| 3 | ✔️ Resuelto | ↑103k ↓7.8k R832k | Problema corregido completamente, funcionalidad restaurada satisfactoriamente |
+
+#### Task 2
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ❌ Fallido | ↑102k ↓7.3k | Renderizó el panel derecho con menos contenido del esperado, problema persiste |
+| 2 | ⚠️ Parcial | ↑104k ↓9.3k R622k | Hizo bien lo pedido en categorías sin hijos, pero rompió el panel en categorías con hijos |
+| 3 | ❌ Fallido | ↑106k ↓11k R784k | Restauró el comportamiento original, pero sigue mostrando algo en categorías sin hijos |
+| 4 | ❌ Fallido | ↑108k ↓12k R895k | Test abortado, no logró cumplir la consigna |
+
+#### MiniMax-M2.7 (Test con archivo AGENTS como contexto)
+
+> **Nota:** Este test usó un archivo `AGENTS` para dar contexto al modelo. Sorprendentemente, el rendimiento fue **peor** que el test anterior sin contexto adicional.
+
+##### Task 1
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ⚠️ Parcial | ↑57k ↓2.8k R351k | Resolvió el issue original, pero cambió hover por click |
+| 2 | ⚠️ Parcial | ↑133k ↓6.4k R597k | Hover restaurado, pero el menú cierra al bajar el mouse |
+| 3 | ❌ Test abortado | ↑247k ↓10k R843k W92k | Sin mejora respecto al test sin contexto. Test abortado |
+
+### Qwen3.6-Plus
+
+#### Task 1
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ❌ Fallido | ↑609k ↓5.8k 38.9%/128k | No se logró la corrección esperada |
+| 2 | ✔️ Resuelto | ↑1.0M ↓9.7k | Problema corregido, comportamiento esperado alcanzado |
+
+#### Task 2
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ⚠️ Parcial | ↑51k ↓7.3k R430k | Hay un efecto raro como de tilt |
+| 2 | ❌ Fallido | ↑-- ↓-- | Lo rompió mucho más. Test abortado |
+
+
+
+## 💰 Pricing de APIs (USD / 1M tokens)
+
+### GPT-5 Series
+
+| Modelo         | Input (Short) | Cached Input | Output | Input (Long) | Cached Input (Long) | Output (Long) |
+|----------------|---------------|--------------|--------|---------------|---------------------|---------------|
+| GPT-5.4        | $2.50         | $0.25        | $15.00 | $5.00         | $0.50               | $22.50        |
+| GPT-5.4-mini   | $0.75         | $0.075       | $4.50  | —             | —                   | —             |
+| GPT-5.4-nano   | $0.20         | $0.02        | $1.25  | —             | —                   | —             |
+| GPT-5.4-pro    | $30.00        | —            | $180.00| $60.00        | —                   | $270.00       |
+| GPT-5.2        | $1.75         | $0.175       | $14.00 | —             | —                   | —             |
+| GPT-5.2-pro    | $21.00        | —            | $168.00| —             | —                   | —             |
+| GPT-5.1        | $1.25         | $0.125       | $10.00 | —             | —                   | —             |
+| GPT-5          | $1.25         | $0.125       | $10.00 | —             | —                   | —             |
+| GPT-5-mini     | $0.25         | $0.025       | $2.00  | —             | —                   | —             |
+| GPT-5-nano     | $0.05         | $0.005       | $0.40  | —             | —                   | —             |
+| GPT-5-pro      | $15.00        | —            | $120.00| —             | —                   | —             |
+
+### GPT-4 Series
+
+| Modelo              | Input (Short) | Cached Input | Output | Input (Long) | Cached Input (Long) | Output (Long) |
+|---------------------|---------------|--------------|--------|---------------|---------------------|---------------|
+| GPT-4.1             | $2.00         | $0.50        | $8.00  | —             | —                   | —             |
+| GPT-4.1-mini        | $0.40         | $0.10        | $1.60  | —             | —                   | —             |
+| GPT-4.1-nano        | $0.10         | $0.025       | $0.40  | —             | —                   | —             |
+| GPT-4o              | $2.50         | $1.25        | $10.00 | —             | —                   | —             |
+| GPT-4o-mini         | $0.15         | $0.075       | $0.60  | —             | —                   | —             |
+| GPT-4o-2024-05-13   | $5.00         | —            | $15.00 | —             | —                   | —             |
+| GPT-4-turbo-2024-04-09 | $10.00      | —            | $30.00 | —             | —                   | —             |
+| GPT-4-0125-preview  | $10.00        | —            | $30.00 | —             | —                   | —             |
+| GPT-4-1106-preview  | $10.00        | —            | $30.00 | —             | —                   | —             |
+| GPT-4-1106-vision-preview | $10.00  | —            | $30.00 | —             | —                   | —             |
+| GPT-4-0613          | $30.00        | —            | $60.00 | —             | —                   | —             |
+| GPT-4-0314          | $30.00        | —            | $60.00 | —             | —                   | —             |
+| GPT-4-32k           | $60.00        | —            | $120.00| —             | —                   | —             |
+
+### o-Series
+
+| Modelo      | Input (Short) | Cached Input | Output | Input (Long) | Cached Input (Long) | Output (Long) |
+|-------------|---------------|--------------|--------|---------------|---------------------|---------------|
+| o4-mini     | $1.10         | $0.275       | $4.40  | —             | —                   | —             |
+| o3          | $2.00         | $0.50        | $8.00  | —             | —                   | —             |
+| o3-mini     | $1.10         | $0.55        | $4.40  | —             | —                   | —             |
+| o3-pro      | $20.00        | —            | $80.00 | —             | —                   | —             |
+| o1          | $15.00        | $7.50        | $60.00 | —             | —                   | —             |
+| o1-mini     | $1.10         | $0.55        | $4.40  | —             | —                   | —             |
+| o1-pro      | $150.00       | —            | $600.00| —             | —                   | —             |
+
+### GPT-3.5 & Legacy
+
+| Modelo                  | Input (Short) | Cached Input | Output |
+|-------------------------|---------------|--------------|--------|
+| GPT-3.5-turbo          | $0.50         | —            | $1.50  |
+| GPT-3.5-turbo-0125    | $0.50         | —            | $1.50  |
+| GPT-3.5-turbo-1106    | $1.00         | —            | $2.00  |
+| GPT-3.5-turbo-0613    | $1.50         | —            | $2.00  |
+| GPT-3.5-0301           | $1.50         | —            | $2.00  |
+| GPT-3.5-turbo-instruct | $1.50         | —            | $2.00  |
+| GPT-3.5-turbo-16k-0613| $3.00         | —            | $4.00  |
+| Davinci-002             | $2.00         | —            | $2.00  |
+| Babbage-002             | $0.40         | —            | $0.40  |
+
+### Gemini
+
+| Modelo               | Input (Short) | Cached Input | Output |
+|----------------------|---------------|--------------|--------|
+| Gemini-3-flash-preview | $0.50       | —            | $3.00  |
+
+### Kimi
+
+| Modelo               | Input (Short) | Cached Input | Output | Context |
+|----------------------|---------------|--------------|--------|----------|
+| Kimi-k2.5            | $0.60         | $0.10        | $3.00  | 252k    |
+
+### DeepSeek
+
+| Modelo               | Input (Short) | Cached Input | Output | Context |
+|----------------------|---------------|--------------|--------|----------|
+| DeepSeek 3.2         | $0.60         | $0.10        | $3.00  | 262k    |
+
+### GLM
+
+| Modelo               | Input (Short) | Cached Input | Output | Context |
+|----------------------|---------------|--------------|--------|----------|
+| GLM 5.1              | $1.40         | $0.26        | $4.40  | 202k    |
+
+## Fix a bug in the Mega Menu hover behavior.
+
+Problem:
+The submenu is being triggered (hover state activated) when the cursor passes through an area where the submenu should not be active or visible.
+
+Expected behavior:
+
+The submenu should only open when the user hovers directly over a valid menu trigger (e.g., category item).
+Moving the cursor outside the trigger area must NOT activate the submenu.
+There should be no invisible hover zones causing unintended activation.
+
+Tasks:
+
+Identify the source of the incorrect hover trigger (CSS hover area, event bubbling, or JS listeners).
+Ensure hover detection is strictly scoped to the intended element.
+If needed, adjust pointer events, z-index, or event delegation logic.
+Prevent accidental activation when moving between elements.
+
+Acceptance criteria:
+
+Submenu only appears on intentional hover over a valid trigger.
+No activation occurs in empty or unrelated areas.
+Smooth UX when moving cursor across the menu.
+
+
+## Improve Mega Menu rendering logic for categories without children.
+
+Problem:
+The right-side panel (children panel) is rendered even when the selected category has no child items.
+
+Expected behavior:
+
+If a category has no children, the right panel should NOT be displayed.
+The layout should adapt gracefully (no empty panel or placeholder).
+
+Tasks:
+
+Add a conditional check to verify if the category has children before rendering the panel.
+Ensure UI layout remains consistent when the panel is hidden.
+Avoid unnecessary DOM rendering for empty states.
+
+Acceptance criteria:
+
+Categories without children do not render the right panel.
+No empty UI blocks are visible.
+Layout remains clean and aligned.
