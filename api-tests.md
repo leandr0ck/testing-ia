@@ -336,6 +336,37 @@ Pricing
   
   
   
+
+## GLM-5.1  
+↑25k ↓6.7k R1.4M  
+6m 4s  
+
+
+ ┌─────────────────────┬─────────┬──────────────────────────────────────────────────────────────────────────────────────────────────┐ 
+ │ Category            │ Score   │ Notes                                                                                            │ 
+ │                     │ (0–3)   │                                                                                                  │ 
+ ├─────────────────────┼─────────┼──────────────────────────────────────────────────────────────────────────────────────────────────┤ 
+ │ Bugfix: layer       │ 3       │ Identificó correctamente src/db/schema.ts como la causa raíz (members: one → many) y agregó      │ 
+ │ identification      │         │ relationName en ambas partes de la relación                                                      │ 
+ ├─────────────────────┼─────────┼──────────────────────────────────────────────────────────────────────────────────────────────────┤ 
+ │ Bugfix: fix quality │ 3       │ Fix mínimo y limpio: solo 4 líneas cambiadas en el schema, sin efectos secundarios; raíz         │ 
+ │                     │         │ correcta                                                                                         │ 
+ ├─────────────────────┼─────────┼──────────────────────────────────────────────────────────────────────────────────────────────────┤ 
+ │ TDD discipline      │ 0       │ Todo fue commiteado en un único commit (908fd68 api tests); no hay evidencia de estado rojo      │ 
+ │                     │         │ antes del verde, ni commits separados tests/impl                                                 │ 
+ ├─────────────────────┼─────────┼──────────────────────────────────────────────────────────────────────────────────────────────────┤ 
+ │ Directory:          │ 3       │ tnt_001 → 2 miembros (incl. usr_005 sin perfil); tnt_002 → totalMembers: 1, DEDUP OK: true;      │ 
+ │ correctness         │         │ dedup resuelto implícitamente por la relación profile: one(profiles) en Drizzle                  │ 
+ ├─────────────────────┼─────────┼──────────────────────────────────────────────────────────────────────────────────────────────────┤ 
+ │ Directory: test     │ 2       │ Cubre el happy path y verifica usr_005 explícitamente; pero no hay ningún                        │ 
+ │ quality             │         │ expect(totalMembers).toBe(1) absoluto apuntando a tnt_002 — el test de unicidad usa tnt_001 (sin │ 
+ │                     │         │ trampa de dedup) y toBe(body.data.members.length) no prueba deduplicación real                   │ 
+ ├─────────────────────┼─────────┼──────────────────────────────────────────────────────────────────────────────────────────────────┤ 
+ │ Regression safety   │ 3       │ 14/14 tests pasan; diff acotado a los 4 archivos relevantes; nada no relacionado tocado          │ 
+ ├─────────────────────┼─────────┼──────────────────────────────────────────────────────────────────────────────────────────────────┤ 
+ │ Total               │ 14      │ /18                                                                                              │ 
+ └─────────────────────┴─────────┴──────────────────────────────────────────────────────────────────────────────────────────────────┘  
+
 ##  gemini-3.1-pro-preview  
 ↑428k ↓8.4k R3.6M  
 6m 34s  
@@ -439,6 +470,7 @@ Pricing
 | Gemini-3.1-pro-preview | $2.00* | $0.20* | $12.00* | *Hasta 200k tokens |
 | Kimi-k2.5 | $0.60 | $0.10 | $3.00 | Pricing directo del doc |
 | GLM-4.7 | $0.60 | $0.30 | $2.20 | Pricing directo del doc |
+| GLM-5.1 | $1.40 | $0.26 | $4.40 | Pricing directo del doc |
 
 \* Para Gemini-3.1-pro-preview, con prompts >200k tokens el pricing pasa a: Input $4.00, Cached $0.40, Output $18.00.
 
@@ -448,21 +480,22 @@ Ranking final usando el **score total del benchmark (`/18`)** y agregando el pri
 
 | Puesto | Modelo | Score | Input / 1M | Cached / 1M | Output / 1M | Lectura rápida |
 |---:|---|---:|---:|---:|---:|---|
-| 1 | GPT-5.4 medium | 11/18 | $2.50 | $0.25 | $15.00 | Empata el mejor score, pero con costo alto |
-| 1 | Gemini 3-flash-preview | 11/18 | $0.50 | $0.05 | $3.00 | Empata el mejor score y tiene la mejor relación costo / resultado |
-| 1 | Kimi-k2.5 (run 2) | 11/18 | $0.60 | $0.10 | $3.00 | Empata el top con el costo más bajo del grupo líder |
-| 4 | Claude Sonnet 4.6 | 10/18 | $3.00 | $0.30 | $15.00 | Buen resultado, pero caro para el score obtenido |
-| 4 | Gemini-3.1-pro-preview | 10/18 | $2.00* | $0.20* | $12.00* | Fuerte, con caveat de costo si el contexto crece |
-| 6 | Qwen-3.6plus | 9/18 | N/D | N/D | N/D | Rendimiento medio, sin pricing consolidado aquí |
-| 6 | GLM-4.7 | 9/18 | $0.60 | $0.30 | $2.20 | Muy buena opción económica |
-| 8 | Kimi-k2.5 (run 1) | 8/18 | $0.60 | $0.10 | $3.00 | Primera corrida: dedup roto y tests más débiles |
-| 9 | MiniMax-M2.7 | 7/18 | N/D | N/D | N/D | Score más bajo y sin pricing consolidado aquí |
+| 1 | **GLM-5.1** | **14/18** | $1.40 | $0.26 | $4.40 | **Nuevo líder absoluto; Bugfix fix quality: 3/3; solo 4 líneas en schema** |
+| 2 | GPT-5.4 medium | 11/18 | $2.50 | $0.25 | $15.00 | Empata en score, pero con costo mucho más alto |
+| 2 | Gemini 3-flash-preview | 11/18 | $0.50 | $0.05 | $3.00 | Empata en score, mejor relación costo del grupo |
+| 2 | Kimi-k2.5 (run 2) | 11/18 | $0.60 | $0.10 | $3.00 | Empata en score, costo bajo |
+| 5 | Claude Sonnet 4.6 | 10/18 | $3.00 | $0.30 | $15.00 | Buen resultado, pero caro para el score |
+| 5 | Gemini-3.1-pro-preview | 10/18 | $2.00* | $0.20* | $12.00* | Fuerte, con caveat de costo si el contexto crece |
+| 7 | Qwen-3.6plus | 9/18 | N/D | N/D | N/D | Rendimiento medio, sin pricing consolidado aquí |
+| 7 | GLM-4.7 | 9/18 | $0.60 | $0.30 | $2.20 | Muy buena opción económica |
+| 9 | Kimi-k2.5 (run 1) | 8/18 | $0.60 | $0.10 | $3.00 | Primera corrida: dedup roto y tests más débiles |
+| 10 | MiniMax-M2.7 | 7/18 | N/D | N/D | N/D | Score más bajo y sin pricing consolidado aquí |
 
 ## Conclusiones del scoreboard final
 
-- **Mejor resultado absoluto:** GPT-5.4 medium, Gemini 3-flash-preview y Kimi-k2.5 (run 2) empatan en 11/18.
-- **Mejor relación costo / calidad:** Kimi-k2.5 (run 2) y Gemini 3-flash-preview — ambos a $0.60/$0.50 input y $3.00 output, con score máximo.
-- **Mejor opción low-cost razonable:** GLM-4.7.
-- **Claude Sonnet 4.6** queda en una zona incómoda: costo alto, score sólido pero no líder.
-- **Kimi-k2.5 muestra alta varianza entre corridas** (8/18 → 11/18): la segunda corrida identificó correctamente la raíz del bug (layer identification: 3) mientras que la primera no tocó el schema.
-- **Patrón transversal del benchmark:** la mayor debilidad no fue solo la ejecución, sino la falta de disciplina TDD y la debilidad de varios tests para capturar el caso real de deduplicación.
+- **Mejor resultado absoluto:** GLM-5.1 lidera en solitario con **14/18**, la puntuación más alta del benchmark. Es el único modelo que logró **Bugfix fix quality: 3/3** (fix mínimo de 4 líneas en schema, sin ruido).
+- **Mejor relación costo / calidad:** Gemini 3-flash-preview ($0.50 input, $3.00 output) y Kimi-k2.5 run 2 ($0.60/$3.00) empatados en 11/18 — score líder a fracción del costo de GLM-5.1.
+- **Mejor opción low-cost razonable:** GLM-4.7 a $0.60 input y $2.20 output con 9/18.
+- **GPT-5.4 medium** queda penalizado por costo alto ($2.50/$15.00) frente a alternativas más baratas con score igual o superior.
+- **GLM-5.1 vs GLM-4.7** muestra el mayor salto generacional de la familia: de 9/18 a 14/18 — mejora crítica en identificación de capa raíz y calidad del fix.
+- **Patrón transversal del benchmark:** TDD discipline sigue siendo 0 en todos los modelos — ningún agente produjo evidencia de red → green → refactor en git.
