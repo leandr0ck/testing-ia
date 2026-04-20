@@ -201,7 +201,43 @@ La dificultad aquí es sutil: `children` siempre es un array (nunca `undefined`)
 | 2 | ⚠️ Parcial | ↑133k ↓6.4k R597k | Hover restaurado, pero el menú cierra al bajar el mouse |
 | 3 | ❌ Test abortado | ↑247k ↓10k R843k W92k | Sin mejora respecto al test sin contexto. Test abortado |
 
-### Qwen3.6-Plus
+### GLM-5 (Test con archivo AGENTS como contexto)
+
+> **Nota:** Este test usó un archivo `AGENTS` para dar contexto al modelo. El archivo `AGENTS.md` contenía ~400+ líneas con información del stack, convenciones, y estructura del proyecto.
+
+#### Task 1
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ✔️ Resuelto | ↑51k ↓2.2k R360k | Primer intento exitoso, sin problemas |
+
+#### Task 2
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ✔️ Resuelto | ↑18k ↓8.4k R437k | Primer intento exitoso, rápido y eficiente |
+
+> **Precios GLM-5:** $1.00/1M input (uncached), $0.20/1M cached input, $3.20/1M output
+
+### GLM-4.7 (Test con archivo AGENTS como contexto)
+
+> **Nota:** Este test usó un archivo `AGENTS` para dar contexto al modelo. El archivo `AGENTS.md` contenía ~400+ líneas con información del stack, convenciones, y estructura del proyecto.
+
+#### Task 1
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ✔️ Resuelto | ↑77k ↓12k R660k | Super rápido, primer intento exitoso |
+
+#### Task 2
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ✔️ Resuelto | ↑72k ↓8.7k R1.2M | Super rápido, primer intento exitoso |
+
+> **Precios GLM-4.7:** $0.60/1M input (uncached), $0.30/1M cached input, $2.20/1M output
+
+### Qwen3.6-Plus (AtlasCloud Provider)
 
 #### Task 1
 
@@ -241,45 +277,7 @@ La dificultad aquí es sutil: `children` siempre es un array (nunca `undefined`)
 
 | Modelo              | Input (Short) | Cached Input | Output | Input (Long) | Cached Input (Long) | Output (Long) |
 |---------------------|---------------|--------------|--------|---------------|---------------------|---------------|
-| GPT-4.1             | $2.00         | $0.50        | $8.00  | —             | —                   | —             |
-| GPT-4.1-mini        | $0.40         | $0.10        | $1.60  | —             | —                   | —             |
-| GPT-4.1-nano        | $0.10         | $0.025       | $0.40  | —             | —                   | —             |
 | GPT-4o              | $2.50         | $1.25        | $10.00 | —             | —                   | —             |
-| GPT-4o-mini         | $0.15         | $0.075       | $0.60  | —             | —                   | —             |
-| GPT-4o-2024-05-13   | $5.00         | —            | $15.00 | —             | —                   | —             |
-| GPT-4-turbo-2024-04-09 | $10.00      | —            | $30.00 | —             | —                   | —             |
-| GPT-4-0125-preview  | $10.00        | —            | $30.00 | —             | —                   | —             |
-| GPT-4-1106-preview  | $10.00        | —            | $30.00 | —             | —                   | —             |
-| GPT-4-1106-vision-preview | $10.00  | —            | $30.00 | —             | —                   | —             |
-| GPT-4-0613          | $30.00        | —            | $60.00 | —             | —                   | —             |
-| GPT-4-0314          | $30.00        | —            | $60.00 | —             | —                   | —             |
-| GPT-4-32k           | $60.00        | —            | $120.00| —             | —                   | —             |
-
-### o-Series
-
-| Modelo      | Input (Short) | Cached Input | Output | Input (Long) | Cached Input (Long) | Output (Long) |
-|-------------|---------------|--------------|--------|---------------|---------------------|---------------|
-| o4-mini     | $1.10         | $0.275       | $4.40  | —             | —                   | —             |
-| o3          | $2.00         | $0.50        | $8.00  | —             | —                   | —             |
-| o3-mini     | $1.10         | $0.55        | $4.40  | —             | —                   | —             |
-| o3-pro      | $20.00        | —            | $80.00 | —             | —                   | —             |
-| o1          | $15.00        | $7.50        | $60.00 | —             | —                   | —             |
-| o1-mini     | $1.10         | $0.55        | $4.40  | —             | —                   | —             |
-| o1-pro      | $150.00       | —            | $600.00| —             | —                   | —             |
-
-### GPT-3.5 & Legacy
-
-| Modelo                  | Input (Short) | Cached Input | Output |
-|-------------------------|---------------|--------------|--------|
-| GPT-3.5-turbo          | $0.50         | —            | $1.50  |
-| GPT-3.5-turbo-0125    | $0.50         | —            | $1.50  |
-| GPT-3.5-turbo-1106    | $1.00         | —            | $2.00  |
-| GPT-3.5-turbo-0613    | $1.50         | —            | $2.00  |
-| GPT-3.5-0301           | $1.50         | —            | $2.00  |
-| GPT-3.5-turbo-instruct | $1.50         | —            | $2.00  |
-| GPT-3.5-turbo-16k-0613| $3.00         | —            | $4.00  |
-| Davinci-002             | $2.00         | —            | $2.00  |
-| Babbage-002             | $0.40         | —            | $0.40  |
 
 ### Gemini
 
