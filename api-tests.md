@@ -229,6 +229,42 @@ Pricing
  └──────────────────────┴─────────┴─────────────────────────────────────────────────────────────────────────────────────────────────┘   
   
   
+## Kimi-k2.5 (run 2)  
+↑48k ↓6.2k R801k  
+ 1m 47s  
+
+
+ ┌────────────────────┬────────┬────────────────────────────────────────────────────────────────────────────────────────────────────┐ 
+ │ Category           │ Score  │ Notes                                                                                              │ 
+ │                    │ (0–3)  │                                                                                                    │ 
+ ├────────────────────┼────────┼────────────────────────────────────────────────────────────────────────────────────────────────────┤ 
+ │ Bugfix: layer      │ 3      │ members: one(users, …) → many(users, …) en tenantsRelations correctamente identificado como raíz   │ 
+ │ identification     │        │ del fallo; cambio de una sola palabra en la línea exacta                                           │ 
+ ├────────────────────┼────────┼────────────────────────────────────────────────────────────────────────────────────────────────────┤ 
+ │ Bugfix: fix        │ 2      │ El fix de schema es mínimo y correcto; sin embargo getTenantFull fue reescrito para usar raw SQL   │ 
+ │ quality            │        │ sin necesidad (una vez corregido el schema, el query relacional habría funcionado), añadiendo      │ 
+ │                    │        │ ruido innecesario                                                                                  │ 
+ ├────────────────────┼────────┼────────────────────────────────────────────────────────────────────────────────────────────────────┤ 
+ │ TDD discipline     │ 0      │ Todos los cambios están en el working tree sin commitear; no existe ningún commit con estado rojo  │ 
+ │                    │        │ previo al verde, ni separación tests/implementación; cero evidencia de flujo red → green →         │ 
+ │                    │        │ refactor                                                                                           │ 
+ ├────────────────────┼────────┼────────────────────────────────────────────────────────────────────────────────────────────────────┤ 
+ │ Directory:         │ 3      │ tnt_001: 200, 2 miembros, usr_005 presente con profile: null ✅; tnt_002: totalMembers: 1,         │ 
+ │ correctness        │        │ members.length: 1, DEDUP OK: true ✅; la deduplicación es implícita: query por users sin JOIN a    │ 
+ │                    │        │ profiles + .get() por miembro                                                                      │ 
+ ├────────────────────┼────────┼────────────────────────────────────────────────────────────────────────────────────────────────────┤ 
+ │ Directory: test    │ 1      │ Cubren status, forma, totalMembers === members.length y unicidad — pero solo contra tnt_001; no    │ 
+ │ quality            │        │ hay ningún expect(totalMembers).toBe(1) absoluto sobre tnt_002; el test de "dedup" no prueba       │ 
+ │                    │        │ deduplicación real; el test de "perfil ausente" es trivialmente verdadero (members.length >=       │ 
+ │                    │        │ membersWithoutProfile.length siempre se cumple)                                                    │ 
+ ├────────────────────┼────────┼────────────────────────────────────────────────────────────────────────────────────────────────────┤ 
+ │ Regression safety  │ 2      │ 13/13 tests pasan; solo se tocan archivos del área de tenants; guardrails preservados; la          │ 
+ │                    │        │ reescritura de getTenantFull no era estrictamente necesaria pero no rompe nada                     │ 
+ ├────────────────────┼────────┼────────────────────────────────────────────────────────────────────────────────────────────────────┤ 
+ │ Total              │ 11     │ /18                                                                                                │ 
+ └────────────────────┴────────┴────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
 ## gemini 3 flash preview  
 ↑290k ↓3.2k R1.3  
 1m 13s  
@@ -413,18 +449,20 @@ Ranking final usando el **score total del benchmark (`/18`)** y agregando el pri
 | Puesto | Modelo | Score | Input / 1M | Cached / 1M | Output / 1M | Lectura rápida |
 |---:|---|---:|---:|---:|---:|---|
 | 1 | GPT-5.4 medium | 11/18 | $2.50 | $0.25 | $15.00 | Empata el mejor score, pero con costo alto |
-| 2 | Gemini 3-flash-preview | 11/18 | $0.50 | $0.05 | $3.00 | Empata el mejor score y tiene la mejor relación costo / resultado |
-| 3 | Claude Sonnet 4.6 | 10/18 | $3.00 | $0.30 | $15.00 | Buen resultado, pero caro para el score obtenido |
+| 1 | Gemini 3-flash-preview | 11/18 | $0.50 | $0.05 | $3.00 | Empata el mejor score y tiene la mejor relación costo / resultado |
+| 1 | Kimi-k2.5 (run 2) | 11/18 | $0.60 | $0.10 | $3.00 | Empata el top con el costo más bajo del grupo líder |
+| 4 | Claude Sonnet 4.6 | 10/18 | $3.00 | $0.30 | $15.00 | Buen resultado, pero caro para el score obtenido |
 | 4 | Gemini-3.1-pro-preview | 10/18 | $2.00* | $0.20* | $12.00* | Fuerte, con caveat de costo si el contexto crece |
-| 5 | Qwen-3.6plus | 9/18 | N/D | N/D | N/D | Rendimiento medio, sin pricing consolidado aquí |
+| 6 | Qwen-3.6plus | 9/18 | N/D | N/D | N/D | Rendimiento medio, sin pricing consolidado aquí |
 | 6 | GLM-4.7 | 9/18 | $0.60 | $0.30 | $2.20 | Muy buena opción económica |
-| 7 | Kimi-k2.5 | 8/18 | $0.60 | $0.10 | $3.00 | Barato, pero menos consistente |
-| 8 | MiniMax-M2.7 | 7/18 | N/D | N/D | N/D | Score más bajo y sin pricing consolidado aquí |
+| 8 | Kimi-k2.5 (run 1) | 8/18 | $0.60 | $0.10 | $3.00 | Primera corrida: dedup roto y tests más débiles |
+| 9 | MiniMax-M2.7 | 7/18 | N/D | N/D | N/D | Score más bajo y sin pricing consolidado aquí |
 
 ## Conclusiones del scoreboard final
 
-- **Mejor resultado absoluto:** GPT-5.4 medium y Gemini 3-flash-preview empatan en 11/18.
-- **Mejor relación costo / calidad:** Gemini 3-flash-preview.
+- **Mejor resultado absoluto:** GPT-5.4 medium, Gemini 3-flash-preview y Kimi-k2.5 (run 2) empatan en 11/18.
+- **Mejor relación costo / calidad:** Kimi-k2.5 (run 2) y Gemini 3-flash-preview — ambos a $0.60/$0.50 input y $3.00 output, con score máximo.
 - **Mejor opción low-cost razonable:** GLM-4.7.
 - **Claude Sonnet 4.6** queda en una zona incómoda: costo alto, score sólido pero no líder.
+- **Kimi-k2.5 muestra alta varianza entre corridas** (8/18 → 11/18): la segunda corrida identificó correctamente la raíz del bug (layer identification: 3) mientras que la primera no tocó el schema.
 - **Patrón transversal del benchmark:** la mayor debilidad no fue solo la ejecución, sino la falta de disciplina TDD y la debilidad de varios tests para capturar el caso real de deduplicación.
