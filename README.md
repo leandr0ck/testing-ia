@@ -170,6 +170,24 @@ La dificultad aquí es sutil: `children` siempre es un array (nunca `undefined`)
 |---------|-----------|---------------------------------------------|---------------|
 | 1 | ✔️ Resuelto | ↑317k ↓4.5k | Resuelto en el primer intento |
 
+### Kimi-k2.5 (Test con archivo AGENTS como contexto)
+
+> **Nota:** Este test usó un archivo `AGENTS` para dar contexto al modelo. El archivo `AGENTS.md` contenía ~400+ líneas con información del stack, convenciones, y estructura del proyecto.
+
+#### Task 1
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ✔️ Resuelto | ↑97k ↓4.7k R605k | Primer intento exitoso, rápido y eficiente |
+
+#### Task 2
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ✔️ Resuelto | ↑17k ↓4.4k R289k | Primer intento exitoso |
+
+> **Precios Kimi-k2.5:** $0.60/1M input (uncached), $0.10/1M cached input, $3.00/1M output
+
 ### MiniMax-M2.7
 
 #### Task 1
