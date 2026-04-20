@@ -4,6 +4,8 @@
 	let { categories = [] } = $props();
 	
 	let activeCategory = $state(null);
+	let isDropdownOpen = $state(false);
+	let closeTimeout;
 
 	$effect(() => {
 		if (categories.length > 0 && !activeCategory) {
@@ -14,12 +16,25 @@
 	function handleMouseEnter(category) {
 		activeCategory = category;
 	}
+
+	function openDropdown() {
+		clearTimeout(closeTimeout);
+		isDropdownOpen = true;
+	}
+
+	function scheduleClose() {
+		closeTimeout = setTimeout(() => {
+			isDropdownOpen = false;
+		}, 100);
+	}
 </script>
 
-<div class="dropdown dropdown-hover group">
+<div class="dropdown group" class:dropdown-open={isDropdownOpen}>
 	<button
 		tabindex="0"
 		class="text-gray-600 hover:text-gray-900 cursor-pointer flex items-center bg-transparent border-none font-semibold p-2 rounded-md hover:bg-gray-50 transition-colors gap-1"
+		onmouseenter={openDropdown}
+		onmouseleave={scheduleClose}
 	>
 		<Icon icon="hugeicons:grid-view" class="text-xl" />
 		Categorías
@@ -33,6 +48,8 @@
 	<div
 		tabindex="0"
 		class="dropdown-content bg-white rounded-xl z-[100] w-[800px] shadow-2xl border border-gray-100 overflow-hidden flex mt-2 -left-4"
+		onmouseenter={openDropdown}
+		onmouseleave={scheduleClose}
 	>
 		<!-- Sidebar (Level 0) -->
 		<div class="w-64 bg-gray-50 border-r border-gray-100 flex flex-col max-h-[500px] overflow-y-auto py-2">

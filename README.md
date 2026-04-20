@@ -1,3 +1,6 @@
+En bugfixing la diferencia grande no está solo en “razonar”, sino en detectar correctamente qué parte del sistema manda: framework, librería, datos, renderizado o evento.
+
+
 # Mega Menu Test
 
 > Test comparativo de modelos IA para bugfixing en Frontend
@@ -95,6 +98,22 @@ La dificultad aquí es sutil: `children` siempre es un array (nunca `undefined`)
 | Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
 |---------|-----------|---------------------------------------------|---------------|
 | 1 | ✔️ Resuelto | ↑43k ↓2.4k R71k | Hyper rápido, resultado perfecto. |
+
+### Gemini 3-flash-preview (Test con contexto)
+
+> **Nota:** Este test usó un archivo `AGENTS` para dar contexto al modelo. El archivo `AGENTS.md` contenía ~400+ líneas con información del stack, convenciones, y estructura del proyecto.
+
+#### Task 1
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ✔️ Resuelto | ↑101k ↓2.3k R358k | Primer intento. Resuelto. Muy Rapido! |
+
+#### Task 2
+
+| Intento | Resultado | Tokens (↑ prompt / ↓ completion / R cache) | Observaciones |
+|---------|-----------|---------------------------------------------|---------------|
+| 1 | ✔️ Resuelto | ↑6.9k ↓2.3k R142k | Primer intento. Resuelto. Hiper Rapido! |
 
 ### GPT-4o
 
@@ -299,9 +318,9 @@ La dificultad aquí es sutil: `children` siempre es un array (nunca `undefined`)
 
 ### Gemini
 
-| Modelo               | Input (Short) | Cached Input | Output |
-|----------------------|---------------|--------------|--------|
-| Gemini-3-flash-preview | $0.50       | —            | $3.00  |
+| Modelo               | Input | Cached Input | Output | Context |
+|----------------------|-------|--------------|--------|----------|
+| Gemini-3-flash-preview | $0.50 | $0.05        | $3.00  | 1M      |
 
 ### Kimi
 
@@ -320,6 +339,32 @@ La dificultad aquí es sutil: `children` siempre es un array (nunca `undefined`)
 | Modelo               | Input (Short) | Cached Input | Output | Context |
 |----------------------|---------------|--------------|--------|----------|
 | GLM 5.1              | $1.40         | $0.26        | $4.40  | 202k    |
+| GLM-5                | $1.00         | $0.20        | $3.20  | 252k    |
+| GLM-4.7              | $0.60         | $0.30        | $2.20  | 252k    |
+
+---
+
+## 🏆 Modelos que resolvieron ambas tareas en el primer intento
+
+Modelos ordenados por **costo total** (calculado como: `↑ × input + R × cached + ↓ × output` para ambas tasks combinadas):
+
+| # | Modelo | Task 1 Tokens | Task 2 Tokens | Costo Task 1 | Costo Task 2 | **Costo Total** |
+|---|--------|--------------|--------------|-------------|-------------|----------------|
+| 1 | Gemini 3-flash-preview (contexto) | ↑101k ↓2.3k R358k | ↑6.9k ↓2.3k R142k | ~$0.075 | ~$0.017 | **~$0.09** |
+| 2 | Kimi-k2.5 (contexto) | ↑97k ↓4.7k R605k | ↑17k ↓4.4k R289k | ~$0.133 | ~$0.052 | **~$0.19** |
+| 3 | GPT-5.4-mini | ↑47k ↓8.7k R436k | ↑43k ↓8.9k R289k | ~$0.107 | ~$0.094 | **~$0.20** |
+| 4 | GLM-5 (contexto) | ↑51k ↓2.2k R360k | ↑18k ↓8.4k R437k | ~$0.130 | ~$0.132 | **~$0.26** |
+| 5 | GLM 5.1 | ↑132k ↓37k R442k | ↑23k ↓5.7k R349k | ~$0.463 | ~$0.148 | **~$0.61** |
+| 6 | GLM-4.7 (contexto) | ↑77k ↓12k R660k | ↑72k ↓8.7k R1.2M | ~$0.271 | ~$0.422 | **~$0.69** |
+| 7 | DeepSeek 3.2 | ↑585k ↓8.4k R171k | ↑562k ↓14k R349k | ~$0.393 | ~$0.414 | **~$0.81** |
+
+> **Observaciones:**
+> - 🥇 Gemini 3-flash con contexto es **9× más barato** que DeepSeek 3.2 logrando el mismo resultado
+> - 🔑 Los modelos con **contexto (AGENTS.md)** dominan el top 4 — el cache reduce drásticamente el costo real
+> - ⚠️ GLM-4.7 sube al #6 por el R1.2M en Task 2 (el cache write tiene costo aunque reducido)
+> - 💸 DeepSeek 3.2 es el más caro del grupo por sus altos valores de ↑ (tokens nuevos sin cachear)
+
+---
 
 ## Fix a bug in the Mega Menu hover behavior.
 
