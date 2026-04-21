@@ -13,6 +13,7 @@
 | GPT-5-mini | OpenAI | $0.25 | $0.025 | $2.00 | — | — | — | — |
 | GPT-5.4-mini | OpenAI | $0.75 | $0.075 | $4.50 | — | — | — | — |
 | Gemini-3-flash-preview | Google | $0.50 | $0.05 | $3.00 | — | — | — | — |
+| Step-3.5-Flash | StepFun | $0.10 | — | $0.30 | — | — | — | — |
 | Qwen 3.6 Plus | Alibaba | $0.50 | $0.10 | $3.00 | — | — | — | — |
 | Kimi-k2.5 | Moonshot | $0.60 | $0.10 | $3.00 | — | — | — | 252k |
 | DeepSeek 3.2 | DeepSeek | $0.2590 | $0.1350 | $0.4200 | — | — | — | 262k |
@@ -65,6 +66,16 @@
 | Gemini-3.1-pro-preview | $2.00* | $0.20* | $12.00* | $4.00* | $0.40* | $18.00* |
 
 *Para contexto ≤200k tokens.
+
+### StepFun
+
+| Modelo | Input | Cached Input | Output |
+|--------|------:|-------------:|-------:|
+| Step-3.5-Flash | $0.10 | — | $0.30 |
+
+**SKUs / referencia**
+- `stepfun-ai/step-3.5-flash.online.input-tokens` → $0.1000 / 1M
+- `stepfun-ai/step-3.5-flash.online.output-tokens` → $0.3000 / 1M
 
 ### Alibaba — Qwen
 

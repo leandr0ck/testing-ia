@@ -555,10 +555,34 @@ Ranking final usando el **score total del benchmark (`/18`)** y agregando el pri
 |---:|---|---:|---:|---:|---:|---|
 | 1 | kimi-k2p6 | 19/24 | 2/3 | $0.3145 | 3:42.14 | Mejor balance general hasta ahora; corrige raíz + PATCH, pero falla la trampa de dedup real. |
 | 2 | DeepSeek-V3.2 | 18/24 | 1/3 | $0.2555 | 14:29.82 | Muy sólido funcionalmente y más prolijo en scope, pero bastante más lento. |
+| 3 | stepfun-ai/Step-3.5-Flash | 8/24 | 3/3 | $0.0704 | 6:49.46 | Muy barato y minimalista, pero no implementó tareas 2 ni 3; fix parcialmente roto. |
 
 ### Conclusiones de esta actualización
 
 - **Mejor score del benchmark v2 hasta ahora:** `kimi-k2p6` sigue arriba con **19/24**.
 - **Balance del grupo actual:** `DeepSeek-V3.2` queda cerca con **18/24**, menor sobreingeniería y todavía más barato que `kimi-k2p6`, aunque penaliza fuerte en tiempo.
+- **Nuevo ingreso — `stepfun-ai/Step-3.5-Flash`:** entra con **8/24** — el costo es excepcionalmente bajo ($0.0704) pero el modelo no implementó las tareas 2 ni 3, ignoró completamente TDD y dejó un fix de schema roto en runtime. No recomendado para agente de código.
 - **La debilidad que sigue apareciendo en varios modelos:** no fijar un test absoluto sobre `tnt_002` como `expect(totalMembers).toBe(1)`.
 - **Patrón estable del benchmark:** varios modelos ya llegan a implementaciones correctas, pero siguen perdiendo score por sobrecambio, tests incompletos o poca adhesión al idiom exacto del proyecto.
+
+---
+
+## stepfun-ai/Step-3.5-Flash
+↑690k ↓4.5k
+6m 49s
+
+pricing
+- **Input:** $0.1000 / M tokens (`stepfun-ai/step-3.5-flash.online.input-tokens`)
+- **Output:** $0.3000 / M tokens (`stepfun-ai/step-3.5-flash.online.output-tokens`)
+
+| Category | Score (0–3) | Notes |
+|---|---:|---|
+| Bugfix: layer identification | 2 | Correctly identified `tenantsRelations.members` in `src/db/schema.ts` as the site of the bug (`one` → `many`). Correct file and layer, no diagnosis of the residual cyclic-structure root cause. |
+| Bugfix: fix quality | 1 | Changed `one(users, …)` to `many(users, …)` — correct direction — but `many()` does not accept `fields`/`references` params (those belong on the `one` side); cyclic-structure error persists; test still fails with 500. |
+| Test discipline | 0 | Zero new tests added. TDD requirement completely ignored. `testCasesAdded=0`. |
+| Directory: correctness | 0 | `GET /:id/directory` not implemented; endpoint returns 404. |
+| Directory: test quality | 0 | No directory tests exist. |
+| Library idiom adherence | 0 | Tasks 2 and 3 not implemented; no mutation helper written, no route handler written, no body parsing. `run()=N/A, awaitJson=N/A, rawSql=no, persistOk=no` (PATCH 404, change never persisted). |
+| Scope / overengineering | 3 | `srcLinesChanged=2, testLinesChanged=0, filesTouched=1, filesOutsideAllowedSet=0, newFilesCreated=0, testCasesAdded=0` — cambio mínimo, aunque por omisión total, no por disciplina. |
+| Regression safety | 2 | Only `src/db/schema.ts` touched; all 5 previously passing tests still pass; no unrelated files modified. |
+| **Total** | **8** | `/24` |

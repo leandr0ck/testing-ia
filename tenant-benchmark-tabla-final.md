@@ -16,6 +16,7 @@
 | accounts/fireworks/models/glm-5p1 | 21/24 | 2/3 | $0.6886 | 6:08.42 | 🔴 **No conviene** |
 | Gemini 3 Flash | 17/24 | 0/3 | $0.4692 | 3:06.01 | 🔴 **No conviene** |
 | accounts/fireworks/models/qwen3p6-plus | 17/24 | 0/3 | $0.4224 | 6:39.70 | 🔴 **No conviene** |
+| stepfun-ai/Step-3.5-Flash | 8/24 | 3/3 | $0.0704 | 6:49.46 | 🔴 **No conviene** |
 
 ## Detalle comparativo
 
@@ -31,11 +32,13 @@
 | 8 | accounts/fireworks/models/qwen3p6-plus | 17/24 | 0/3 | 0.4224 | 6:39.70 | Resultado medio con tiempo pobre. |
 | 9 | GPT-5.4 Mini | 16/24 | 1/3 | 0.1687 | 5:07.05 | Económico, pero score bajo para ser elección principal. |
 | 10 | MiniMax-M2.7 | 16/24 | 0/3 | 0.1263 | 4:01.31 | Muy barato, aunque queda corto en calidad final. |
+| 11 | stepfun-ai/Step-3.5-Flash | 8/24 | 3/3 | 0.0704 | 6:49.46 | Costo excepcionalmente bajo, pero no implementó las tareas 2 ni 3; score más bajo del benchmark. |
 
 ## Resultados finales
 
 - **Ganador por score bruto:** `accounts/fireworks/models/glm-5p1` con **21/24**.
 - **Ganador por balance general:** `kimi-k2p6`.
 - **Mejor opción costo/velocidad dentro de los modelos fuertes:** `accounts/fireworks/models/kimi-k2p5`.
-- **Nuevo ingreso destacado:** `DeepSeek-V3.2` entra con **18/24**, costo todavía competitivo y poca sobreingeniería, pero con una penalización muy fuerte en tiempo total.
+- **Nuevo ingreso — `DeepSeek-V3.2`:** entra con **18/24**, costo todavía competitivo y poca sobreingeniería, pero con una penalización muy fuerte en tiempo total.
+- **Nuevo ingreso — `stepfun-ai/Step-3.5-Flash`:** entra con **8/24** — el costo es el más bajo del benchmark ($0.0704) pero el modelo no implementó las tareas 2 ni 3, ignoró TDD completamente y dejó el fix roto en runtime. Último puesto.
 - **Patrón del benchmark:** los modelos tienden a acercarse en correctitud funcional, pero se separan por minimalismo, tests-trampa para `tnt_002`, costo y latencia.
