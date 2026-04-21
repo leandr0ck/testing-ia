@@ -330,6 +330,7 @@ La dificultad aquí es sutil: `children` siempre es un array (nunca `undefined`)
 | Modelo               | Input (Short) | Cached Input | Output | Context |
 |----------------------|---------------|--------------|--------|----------|
 | Kimi-k2.5            | $0.60         | $0.10        | $3.00  | 252k    |
+| Kimi-k2.6            | $0.95         | $0.16        | $4.00  | 262k    |
 
 ### DeepSeek
 
@@ -366,6 +367,36 @@ Modelos ordenados por **costo total** (calculado como: `↑ × input + R × cach
 > - 🔑 Los modelos con **contexto (AGENTS.md)** dominan el top 4 — el cache reduce drásticamente el costo real
 > - ⚠️ GLM-4.7 sube al #6 por el R1.2M en Task 2 (el cache write tiene costo aunque reducido)
 > - 💸 DeepSeek 3.2 es el más caro del grupo por sus altos valores de ↑ (tokens nuevos sin cachear)
+
+---
+
+## 📊 Tabla final — benchmark tenant flow
+
+Criterio de evaluación final: **score total + poca sobreingeniería + buen costo + buen tiempo**.
+
+| Modelo | Score | Sobreingeniería | Costo benchmark | Tiempo benchmark | Veredicto |
+|---|---:|---:|---:|---:|---|
+| accounts/fireworks/models/kimi-k2p5 | 18/24 | 1/3 | $0.1644 | 1:51.51 | ✅ **Conviene** |
+| GPT-5.4 Mini | 16/24 | 1/3 | $0.1687 | 5:07.05 | 🟡 **Depende** |
+| MiniMax-M2.7 | 16/24 | 0/3 | $0.1263 | 4:01.31 | 🟡 **Depende** |
+| GPT-5.4 | 19/24 | 1/3 | $0.6153 | 4:29.64 | 🟡 **Depende** |
+| accounts/fireworks/models/glm-4p7 | 18/24 | 0/3 | $0.5834 | 1:55.90 | 🔴 **No conviene** |
+| accounts/fireworks/models/glm-5p1 | 21/24 | 2/3 | $0.6886 | 6:08.42 | 🔴 **No conviene** |
+| Gemini 3 Flash | 17/24 | 0/3 | $0.4692 | 3:06.01 | 🔴 **No conviene** |
+| accounts/fireworks/models/qwen3p6-plus | 17/24 | 0/3 | $0.4224 | 6:39.70 | 🔴 **No conviene** |
+
+### Conclusiones
+
+- **Modelo más balanceado:** `accounts/fireworks/models/kimi-k2p5`
+- **Mejor score absoluto:** `accounts/fireworks/models/glm-5p1`
+- **Más barato:** `MiniMax-M2.7`
+- **Más rápido:** `accounts/fireworks/models/kimi-k2p5`
+
+### Lectura rápida del veredicto
+
+- ✅ **Conviene**: buen equilibrio entre calidad, costo y tiempo.
+- 🟡 **Depende**: puede servir si priorizás una variable específica (por ejemplo costo mínimo o algo más de score).
+- 🔴 **No conviene**: queda superado por alternativas más baratas, más rápidas o con menos sobreingeniería.
 
 ---
 
