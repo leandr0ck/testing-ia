@@ -376,6 +376,7 @@ Criterio de evaluación final: **score total + poca sobreingeniería + buen cost
 
 | Modelo | Score | Sobreingeniería | Costo benchmark | Tiempo benchmark | Veredicto |
 |---|---:|---:|---:|---:|---|
+| kimi-k2p6 | 19/24 | 2/3 | $0.3145 | 3:42.14 | ✅ **Conviene** |
 | accounts/fireworks/models/kimi-k2p5 | 18/24 | 1/3 | $0.1644 | 1:51.51 | ✅ **Conviene** |
 | GPT-5.4 Mini | 16/24 | 1/3 | $0.1687 | 5:07.05 | 🟡 **Depende** |
 | MiniMax-M2.7 | 16/24 | 0/3 | $0.1263 | 4:01.31 | 🟡 **Depende** |
@@ -387,10 +388,11 @@ Criterio de evaluación final: **score total + poca sobreingeniería + buen cost
 
 ### Conclusiones
 
-- **Modelo más balanceado:** `accounts/fireworks/models/kimi-k2p5`
+- **Modelo más balanceado:** `kimi-k2p6` si querés un score alto sin pagar el salto de GPT-5.4; `accounts/fireworks/models/kimi-k2p5` sigue siendo el mejor ultra-eficiente.
 - **Mejor score absoluto:** `accounts/fireworks/models/glm-5p1`
 - **Más barato:** `MiniMax-M2.7`
 - **Más rápido:** `accounts/fireworks/models/kimi-k2p5`
+- **Mejor upgrade sobre GPT-5.4 en costo/score:** `kimi-k2p6` empata en score (19/24), cuesta ~49% menos y además tarda menos.
 
 ### Lectura rápida del veredicto
 

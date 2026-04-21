@@ -499,3 +499,36 @@ Ranking final usando el **score total del benchmark (`/18`)** y agregando el pri
 - **GPT-5.4 medium** queda penalizado por costo alto ($2.50/$15.00) frente a alternativas más baratas con score igual o superior.
 - **GLM-5.1 vs GLM-4.7** muestra el mayor salto generacional de la familia: de 9/18 a 14/18 — mejora crítica en identificación de capa raíz y calidad del fix.
 - **Patrón transversal del benchmark:** TDD discipline sigue siendo 0 en todos los modelos — ningún agente produjo evidencia de red → green → refactor en git.
+
+## Actualización 2026-04-21 — tenant flow v2 (3 tareas, score /24)
+
+> Nuevo resultado agregado desde: `/Users/leancabrera/.pi/agent/extensions/model-benchmark-runner/runs/1776775341975-kimi-k2p6.json`
+>
+> **Importante:** este run **no es directamente comparable** con el scoreboard principal de arriba porque el benchmark cambió: ahora incluye una tercera tarea (`PATCH /tenants/:id`) y el score total pasa de **/18** a **/24**.
+
+### kimi-k2p6
+
+- **Score total:** 19/24
+- **Costo benchmark:** $0.3145
+- **Tiempo benchmark:** 3:42.14
+- **Sobreingeniería:** 2/3
+
+#### Lectura del resultado
+
+| Categoría | Score | Nota breve |
+|---|---:|---|
+| Bugfix: layer identification | 3/3 | Detectó las dos causas: cardinalidad incorrecta en `tenantsRelations.members` y query sin `await`. |
+| Bugfix: fix quality | 3/3 | Fix mínimo y limpio en schema + `await` correcto en `getTenantFull`. |
+| Test discipline | 2/3 | Buena cobertura del flujo nuevo, pero sin prueba de persistencia vía GET posterior ni test-trampa real de deduplicación. |
+| Directory: correctness | 2/3 | `tnt_001` bien, pero `tnt_002` duplica `usr_002` por `leftJoin(profiles)` sin dedup. |
+| Directory: test quality | 1/3 | Los tests miran `tnt_001`; no ejercitan el caso `tnt_002` que destapa el bug real. |
+| Library idiom adherence | 3/3 | Usa `.run()`, `await c.req.json()`, `eq`, y persiste correctamente el PATCH. |
+| Scope / overengineering | 2/3 | Cambios contenidos a 4 archivos, pero con volumen medio de líneas tocadas. |
+| Regression safety | 3/3 | 13 tests pasan y no toca rutas ajenas. |
+
+### Conclusiones de esta actualización
+
+- **Fuerte mejora de balance frente a GPT-5.4:** `kimi-k2p6` llega al mismo nivel de score observado en el benchmark nuevo (19/24) con bastante menos costo.
+- **No reemplaza al mejor low-cost puro:** `kimi-k2p5` sigue siendo más barato y más rápido si tolerás un punto menos de score.
+- **Todavía falla en la trampa importante del benchmark:** la deduplicación real de `tnt_002` sigue sin quedar resuelta ni bien testeada.
+- **Patrón que se repite:** incluso cuando el modelo arregla bien la raíz del bug inicial y el endpoint PATCH, los tests siguen tendiendo a validar el happy path (`tnt_001`) y no el caso que realmente rompe la lógica.
