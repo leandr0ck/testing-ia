@@ -18,9 +18,11 @@
 | Kimi-k2.5 | Moonshot | $0.60 | $0.10 | $3.00 | — | — | — | 252k |
 | DeepSeek 3.2 | DeepSeek | $0.2590 | $0.1350 | $0.4200 | — | — | — | 262k |
 | GLM-4.7 | Zhipu | $0.60 | $0.30 | $2.20 | — | — | — | 252k |
+| GLM-4.7 | SiliconFlow | $0.45 | $0.11 | $2.20 | — | — | — | 252k |
 | GPT-5 | OpenAI | $1.25 | $0.125 | $10.00 | — | — | — | — |
 | GPT-5.1 | OpenAI | $1.25 | $0.125 | $10.00 | — | — | — | — |
 | GLM-5 | Zhipu | $1.00 | $0.20 | $3.20 | — | — | — | 252k |
+| GLM-5 | SiliconFlow | $0.95 | $0.20 | $2.55 | — | — | — | 252k |
 | GLM 5.1 | Zhipu | $1.40 | $0.26 | $4.40 | — | — | — | 202k |
 | GPT-5.2 | OpenAI | $1.75 | $0.175 | $14.00 | — | — | — | — |
 | Gemini-3.1-pro-preview | Google | $2.00* | $0.20* | $12.00* | $4.00* | $0.40* | $18.00* | — |
@@ -107,3 +109,18 @@
 | GLM-4.7 | $0.60 | $0.30 | $2.20 | 252k |
 | GLM-5 | $1.00 | $0.20 | $3.20 | 252k |
 | GLM 5.1 | $1.40 | $0.26 | $4.40 | 202k |
+
+### SiliconFlow — GLM
+
+| Modelo | Input | Cached Input | Output | Contexto |
+|--------|------:|-------------:|-------:|----------|
+| GLM-4.7 | $0.45 | $0.11 | $2.20 | 252k |
+| GLM-5 | $0.95 | $0.20 | $2.55 | 252k |
+
+**SKUs / referencia**
+- `zai-org/glm-4.7.online.cached-input-tokens` → $0.1100 / 1M
+- `zai-org/glm-4.7.online.input-tokens` → $0.4500 / 1M
+- `zai-org/glm-4.7.online.output-tokens` → $2.2000 / 1M
+- `zai-org/glm-5.online.cached-input-tokens` → $0.2000 / 1M
+- `zai-org/glm-5.online.input-tokens` → $0.9500 / 1M
+- `zai-org/glm-5.online.output-tokens` → $2.5500 / 1M

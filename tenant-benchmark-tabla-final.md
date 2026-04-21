@@ -12,6 +12,7 @@
 | GPT-5.4 Mini | 16/24 | 1/3 | $0.1687 | 5:07.05 | 🟡 **Depende** |
 | MiniMax-M2.7 | 16/24 | 0/3 | $0.1263 | 4:01.31 | 🟡 **Depende** |
 | GPT-5.4 | 19/24 | 1/3 | $0.6153 | 4:29.64 | 🟡 **Depende** |
+| GLM-4.7 (SiliconFlow) | 12/24 | 0/3 | $0.1957 | 16:45.66 | 🟡 **Depende** |
 | accounts/fireworks/models/glm-4p7 | 18/24 | 0/3 | $0.5834 | 1:55.90 | 🔴 **No conviene** |
 | accounts/fireworks/models/glm-5p1 | 21/24 | 2/3 | $0.6886 | 6:08.42 | 🔴 **No conviene** |
 | Gemini 3 Flash | 17/24 | 0/3 | $0.4692 | 3:06.01 | 🔴 **No conviene** |
@@ -28,11 +29,12 @@
 | 4 | accounts/fireworks/models/kimi-k2p5 | 18/24 | 1/3 | 0.1644 | 1:51.51 | Mejor opción costo/velocidad entre los de 18/24. |
 | 5 | DeepSeek-V3.2 | 18/24 | 1/3 | 0.2555 | 14:29.82 | Sólido y relativamente barato, pero penalizado fuerte por latencia. |
 | 6 | accounts/fireworks/models/glm-4p7 | 18/24 | 0/3 | 0.5834 | 1:55.90 | Más caro que otras opciones con el mismo score. |
-| 7 | Gemini 3 Flash | 17/24 | 0/3 | 0.4692 | 3:06.01 | Correcto, pero superado en valor por opciones más baratas o con mejor score. |
-| 8 | accounts/fireworks/models/qwen3p6-plus | 17/24 | 0/3 | 0.4224 | 6:39.70 | Resultado medio con tiempo pobre. |
-| 9 | GPT-5.4 Mini | 16/24 | 1/3 | 0.1687 | 5:07.05 | Económico, pero score bajo para ser elección principal. |
-| 10 | MiniMax-M2.7 | 16/24 | 0/3 | 0.1263 | 4:01.31 | Muy barato, aunque queda corto en calidad final. |
-| 11 | stepfun-ai/Step-3.5-Flash | 8/24 | 3/3 | 0.0704 | 6:49.46 | Costo excepcionalmente bajo, pero no implementó las tareas 2 ni 3; score más bajo del benchmark. |
+| 7 | GLM-4.7 (SiliconFlow) | 12/24 | 0/3 | 0.1957 | 16:45.66 | Más barato que Zhipu en input/cached; score bajo por sobre-test y test-trampa débil. |
+| 8 | Gemini 3 Flash | 17/24 | 0/3 | 0.4692 | 3:06.01 | Correcto, pero superado en valor por opciones más baratas o con mejor score. |
+| 9 | accounts/fireworks/models/qwen3p6-plus | 17/24 | 0/3 | 0.4224 | 6:39.70 | Resultado medio con tiempo pobre. |
+| 10 | GPT-5.4 Mini | 16/24 | 1/3 | 0.1687 | 5:07.05 | Económico, pero score bajo para ser elección principal. |
+| 11 | MiniMax-M2.7 | 16/24 | 0/3 | 0.1263 | 4:01.31 | Muy barato, aunque queda corto en calidad final. |
+| 12 | stepfun-ai/Step-3.5-Flash | 8/24 | 3/3 | 0.0704 | 6:49.46 | Costo excepcionalmente bajo, pero no implementó las tareas 2 ni 3; score más bajo del benchmark. |
 
 ## Resultados finales
 

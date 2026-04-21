@@ -567,6 +567,29 @@ Ranking final usando el **score total del benchmark (`/18`)** y agregando el pri
 
 ---
 
+## zai-org/GLM-4.7 (SiliconFlow)
+↑61k ↓11k R1.5M
+16m 45s
+
+pricing
+- **Input:** $0.4500 / M tokens (`zai-org/glm-4.7.online.input-tokens`)
+- **Cached Input:** $0.1100 / M tokens (`zai-org/glm-4.7.online.cached-input-tokens`)
+- **Output:** $2.2000 / M tokens (`zai-org/glm-4.7.online.output-tokens`)
+
+| Category | Score (0–3) | Notes |
+|---|---:|---|
+| Bugfix: layer identification | 1 | Identified the JSON cyclic-structure symptom; root cause (`members: one(...)` → `many(...)` in `src/db/schema.ts`) never identified or mentioned — schema file untouched. |
+| Bugfix: fix quality | 1 | `getTenantFull` rewritten to bypass the relations API entirely, stopping the 500; but `members` was silently dropped from the `/full` response shape, and the schema bug remains — symptom fixed, cause left in place. |
+| Test discipline | 2 | Solid coverage of happy path, 404/400 guards, and PATCH persistence; deduplication test runs against `tnt_001` (no multi-profile users) rather than the trap tenant; no explicit assertion that `usr_005` is present with `profile: null`. |
+| Directory: correctness | 2 | `tnt_001` returns 2 members and handles null profile correctly; `tnt_002` live call returns `totalMembers: 2`, `member ids: [usr_002, usr_002]`, `DEDUP OK: false` — naive `leftJoin` without deduplication. |
+| Directory: test quality | 1 | Dedup test (`each member appears only once`) queries `tnt_001` which has no multi-profile users — passes but does not exercise the trap; no `totalMembers === 1` absolute assertion against `tnt_002`; null-profile membership only asserted indirectly via `members.length > 0` on `tnt_002`. |
+| Library idiom adherence | 3 | `run()=yes, awaitJson=yes, rawSql=no, persistOk=yes`; `getTenantById` reused for post-update re-fetch; `eq` operator used correctly throughout. |
+| Scope / overengineering | 0 | `srcLinesChanged=109, testLinesChanged=245, filesTouched=3, filesOutsideAllowedSet=0, newFilesCreated=0, testCasesAdded=15, testDescribeBlocks=2, testHelpersAdded=0` (`testOver=true`: 245 > 170). |
+| Regression safety | 2 | All 21 tests pass; smoke and guardrail tests intact; `GET /tenants/:id/full` silently lost `members` from its response shape — a behavioral regression on an existing endpoint not validated by any test. |
+| **Total** | **12** | `/24` |
+
+---
+
 ## stepfun-ai/Step-3.5-Flash
 ↑690k ↓4.5k
 6m 49s
