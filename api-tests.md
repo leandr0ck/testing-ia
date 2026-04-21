@@ -526,9 +526,39 @@ Ranking final usando el **score total del benchmark (`/18`)** y agregando el pri
 | Scope / overengineering | 2/3 | Cambios contenidos a 4 archivos, pero con volumen medio de líneas tocadas. |
 | Regression safety | 3/3 | 13 tests pasan y no toca rutas ajenas. |
 
+### DeepSeek-V3.2
+
+> Resultado agregado desde: `/Users/leancabrera/.pi/agent/extensions/model-benchmark-runner/runs/1776779646316-deepseek-v3.2.json`
+
+- **Score total:** 18/24
+- **Costo benchmark:** $0.2555
+- **Tiempo benchmark:** 14:29.82
+- **Tiempo validación:** 4:05.40
+- **Sobreingeniería:** 1/3
+
+#### Lectura del resultado
+
+| Categoría | Score | Nota breve |
+|---|---:|---|
+| Bugfix: layer identification | 3/3 | Identificó correctamente `tenantsRelations.members: one(...)` como raíz y agregó `relationName` en ambos lados. |
+| Bugfix: fix quality | 2/3 | El fix raíz del schema es correcto y mínimo, pero además reescribió `getTenantFull`, agregando cambio lateral innecesario. |
+| Test discipline | 2/3 | Cubre bugfix, caso sin profile, PATCH persistente y validaciones 400/404; faltó una prueba-trampa más fuerte para `tnt_002`. |
+| Directory: correctness | 3/3 | `tnt_001` y `tnt_002` quedan correctos; `usr_005` sin profile aparece; `totalMembers` y deduplicación validan bien en runtime. |
+| Directory: test quality | 2/3 | Buena cobertura general, pero faltó el assert decisivo `tnt_002 => totalMembers === 1` que capture una deduplicación rota por join. |
+| Library idiom adherence | 2/3 | Usa `await c.req.json()` y Drizzle sin SQL raw; el update usa `.returning().get()` en vez del patrón esperado `.run()`. |
+| Scope / overengineering | 1/3 | Cambios concentrados pero con bastante peso en tests (154 líneas nuevas) y una reescritura no estrictamente necesaria. |
+| Regression safety | 3/3 | 17 tests pasan, sin tocar archivos fuera del scope permitido. |
+
+### Tabla final provisional — benchmark v2 (/24)
+
+| Puesto | Modelo | Score | Sobreingeniería | Costo benchmark | Tiempo benchmark | Lectura rápida |
+|---:|---|---:|---:|---:|---:|---|
+| 1 | kimi-k2p6 | 19/24 | 2/3 | $0.3145 | 3:42.14 | Mejor balance general hasta ahora; corrige raíz + PATCH, pero falla la trampa de dedup real. |
+| 2 | DeepSeek-V3.2 | 18/24 | 1/3 | $0.2555 | 14:29.82 | Muy sólido funcionalmente y más prolijo en scope, pero bastante más lento. |
+
 ### Conclusiones de esta actualización
 
-- **Fuerte mejora de balance frente a GPT-5.4:** `kimi-k2p6` llega al mismo nivel de score observado en el benchmark nuevo (19/24) con bastante menos costo.
-- **No reemplaza al mejor low-cost puro:** `kimi-k2p5` sigue siendo más barato y más rápido si tolerás un punto menos de score.
-- **Todavía falla en la trampa importante del benchmark:** la deduplicación real de `tnt_002` sigue sin quedar resuelta ni bien testeada.
-- **Patrón que se repite:** incluso cuando el modelo arregla bien la raíz del bug inicial y el endpoint PATCH, los tests siguen tendiendo a validar el happy path (`tnt_001`) y no el caso que realmente rompe la lógica.
+- **Mejor score del benchmark v2 hasta ahora:** `kimi-k2p6` sigue arriba con **19/24**.
+- **Balance del grupo actual:** `DeepSeek-V3.2` queda cerca con **18/24**, menor sobreingeniería y todavía más barato que `kimi-k2p6`, aunque penaliza fuerte en tiempo.
+- **La debilidad que sigue apareciendo en varios modelos:** no fijar un test absoluto sobre `tnt_002` como `expect(totalMembers).toBe(1)`.
+- **Patrón estable del benchmark:** varios modelos ya llegan a implementaciones correctas, pero siguen perdiendo score por sobrecambio, tests incompletos o poca adhesión al idiom exacto del proyecto.

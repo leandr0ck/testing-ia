@@ -15,7 +15,7 @@
 | Gemini-3-flash-preview | Google | $0.50 | $0.05 | $3.00 | — | — | — | — |
 | Qwen 3.6 Plus | Alibaba | $0.50 | $0.10 | $3.00 | — | — | — | — |
 | Kimi-k2.5 | Moonshot | $0.60 | $0.10 | $3.00 | — | — | — | 252k |
-| DeepSeek 3.2 | DeepSeek | $0.60 | $0.10 | $3.00 | — | — | — | 262k |
+| DeepSeek 3.2 | DeepSeek | $0.2590 | $0.1350 | $0.4200 | — | — | — | 262k |
 | GLM-4.7 | Zhipu | $0.60 | $0.30 | $2.20 | — | — | — | 252k |
 | GPT-5 | OpenAI | $1.25 | $0.125 | $10.00 | — | — | — | — |
 | GPT-5.1 | OpenAI | $1.25 | $0.125 | $10.00 | — | — | — | — |
@@ -82,7 +82,12 @@
 
 | Modelo | Input | Cached Input | Output | Contexto |
 |--------|------:|-------------:|-------:|----------|
-| DeepSeek 3.2 | $0.60 | $0.10 | $3.00 | 262k |
+| DeepSeek 3.2 | $0.2590 | $0.1350 | $0.4200 | 262k |
+
+**SKUs / referencia**
+- `deepseek-ai/deepseek-v3.2.online.cached-input-tokens` → $0.1350 / 1M
+- `deepseek-ai/deepseek-v3.2.online.input-tokens` → $0.2590 / 1M
+- `deepseek-ai/deepseek-v3.2.online.output-tokens` → $0.4200 / 1M
 
 ### Zhipu — GLM
 
